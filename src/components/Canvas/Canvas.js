@@ -53,7 +53,7 @@ const Canvas = () => {
 		}
 	};
 
-	const closePath = (e) => {
+	const closePath = () => {
 		setMouseDown(false);
 		if (selected.w && selected.h) setObjects([...objects, selected]);
 	};
@@ -77,7 +77,7 @@ const Canvas = () => {
 			className={Styles.Canvas}
 			onMouseDown={(e) => beginPath(e)}
 			onMouseMove={(e) => movePressed(e)}
-			onMouseUp={(e) => closePath(e)}
+			onMouseUp={closePath}
 		>
 			Drawing canvas
 		</canvas>
