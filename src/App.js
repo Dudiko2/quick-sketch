@@ -13,7 +13,11 @@ function App() {
 	const [tool, setTool] = useState("ellipse");
 
 	const createRect = (e) => {
-		const newElement = new CanvasElement(tool, e.clientX, e.clientY);
+		const newElement = new CanvasElement({
+			type: tool,
+			x: e.clientX,
+			y: e.clientY,
+		});
 
 		setSelected(newElement.id);
 		setCvsElements([...cvsElements, newElement]);
@@ -31,8 +35,8 @@ function App() {
 			const h = Math.abs(mouseAnchor.y - e.clientY);
 
 			const newArr = [...cvsElements];
+			newArr[id] = new CanvasElement({ ...newArr[id], x, y, w, h });
 
-			newArr[id] = { ...newArr[id], x, y, w, h };
 			setCvsElements(newArr);
 		}
 	};
