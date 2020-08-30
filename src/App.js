@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+import { CanvasElement } from "./actions/elements";
 
 import Canvas from "./components/Canvas/Canvas";
 import Toolbar from "./components/Toolbar/Toolbar";
@@ -9,15 +10,10 @@ function App() {
 	const [selected, setSelected] = useState(null);
 	const [isMouseDown, setIsMouseDown] = useState(false);
 	const [mouseAnchor, setMouseAnchor] = useState(null);
+	const [tool, setTool] = useState("ellipse");
 
 	const createRect = (e) => {
-		const newElement = {
-			id: Math.random() * 10000,
-			x: e.clientX,
-			y: e.clientY,
-			w: 0,
-			h: 0,
-		};
+		const newElement = new CanvasElement(tool, e.clientX, e.clientY);
 
 		setSelected(newElement.id);
 		setCvsElements([...cvsElements, newElement]);
