@@ -41,7 +41,7 @@ const Canvas = ({
 	useEffect(() => {
 		// console.log("drawCanvas effect");
 		drawCanvas();
-	}, [drawCanvas]);
+	}, [drawCanvas, cvsSize]);
 
 	return (
 		<canvas

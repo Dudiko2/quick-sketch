@@ -4,7 +4,7 @@ import { CanvasElement } from "./actions/elements";
 
 import Canvas from "./components/Canvas/Canvas";
 import Toolbar from "./components/Toolbar/Toolbar";
-import { DEFAULT_TOOL } from "./state/globals";
+import { DEFAULT_TOOL, RECTANGLE, ELLIPSE } from "./state/globals";
 
 function App() {
 	const [cvsElements, setCvsElements] = useState([]);
@@ -47,25 +47,16 @@ function App() {
 	};
 
 	const mouseUp = () => {
+		const els = cvsElements.filter((elm) => elm.w !== 0 && elm.h !== 0);
+
+		if (els.length !== cvsElements.length) setSelected(null);
+		setCvsElements(els);
 		setIsMouseDown(false);
 	};
 
 	return (
 		<div className="App">
-			<div
-				className="Layout"
-				style={{
-					position: "absolute",
-					top: 0,
-					left: 0,
-					width: "100%",
-					display: "flex",
-					justifyContent: "center",
-					zIndex: 1,
-				}}
-			>
-				<Toolbar setTool={setTool} active={tool} />
-			</div>
+			<Toolbar setTool={setTool} active={tool} />
 			<Canvas
 				elements={cvsElements}
 				createObject={createShape}

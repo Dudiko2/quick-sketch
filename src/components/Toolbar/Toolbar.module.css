@@ -1,3 +1,13 @@
+.Container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	z-index: 1;
+}
+
 .Toolbar {
 	display: flex;
 	justify-content: center;
@@ -31,4 +41,24 @@
 
 .Toolbar .active:hover {
 	background-color: black;
+}
+
+@media only screen and (min-width: 1024px) {
+	.Container {
+		height: 100%;
+		width: auto;
+	}
+
+	.Toolbar {
+		flex-direction: column;
+		justify-content: flex-start;
+		border-radius: 0;
+		margin: 0;
+		padding: 1em;
+		border-right: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.Toolbar div {
+		margin: 0.2em;
+	}
 }
