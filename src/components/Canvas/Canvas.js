@@ -1,8 +1,14 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import Styles from "./Canvas.module.css";
-import { drawElements } from "../../actions/drawing";
+import { drawElements, drawSelection } from "../../actions/drawing";
 
-const Canvas = ({ elements, createObject, editObject, onMouseUp }) => {
+const Canvas = ({
+	elements,
+	createObject,
+	editObject,
+	onMouseUp,
+	selected,
+}) => {
 	const cRef = useRef();
 
 	const [cvsSize, setCvsSize] = useState({
@@ -21,7 +27,8 @@ const Canvas = ({ elements, createObject, editObject, onMouseUp }) => {
 		ctx.clearRect(0, 0, cvs.width, cvs.height);
 
 		drawElements(ctx, elements);
-	}, [elements]);
+		if (selected) drawSelection(ctx, elements, selected);
+	}, [elements, selected]);
 
 	useEffect(() => {
 		console.log("setSize effect");

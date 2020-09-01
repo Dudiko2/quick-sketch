@@ -1,15 +1,34 @@
 .Toolbar {
 	display: flex;
+	justify-content: center;
+	align-items: center;
 	background-color: white;
 	margin: 0.5em;
-	padding: 0.2em 1em;
+	padding: 0.2em 0;
 	border-radius: 0.6em;
 	font-weight: bold;
-	border: 2px solid black;
 }
 
-.Toolbar span {
+.Toolbar div {
 	padding: 0.6em;
 	margin: 0 0.2em;
 	border-radius: 0.6em;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.Toolbar div:hover {
+	cursor: pointer;
+	background-color: #eeeeee;
+}
+
+.Toolbar .active {
+	background-color: black;
+	color: white;
+}
+
+.Toolbar .active:hover {
+	background-color: black;
 }

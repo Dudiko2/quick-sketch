@@ -4,19 +4,24 @@ import { CanvasElement } from "./actions/elements";
 
 import Canvas from "./components/Canvas/Canvas";
 import Toolbar from "./components/Toolbar/Toolbar";
+import { DEFAULT_TOOL } from "./state/globals";
 
 function App() {
 	const [cvsElements, setCvsElements] = useState([]);
 	const [selected, setSelected] = useState(null);
 	const [isMouseDown, setIsMouseDown] = useState(false);
 	const [mouseAnchor, setMouseAnchor] = useState(null);
-	const [tool, setTool] = useState("ellipse");
+	const [tool, setTool] = useState(DEFAULT_TOOL);
+	const [strokeWidth, setStrokeWidth] = useState(3);
+	const [strokeColor, setStrokeColor] = useState("#000");
 
-	const createRect = (e) => {
+	const createShape = (e) => {
 		const newElement = new CanvasElement({
 			type: tool,
 			x: e.clientX,
 			y: e.clientY,
+			strokeW: strokeWidth,
+			strokeC: strokeColor,
 		});
 
 		setSelected(newElement.id);
@@ -25,7 +30,7 @@ function App() {
 		setIsMouseDown(true);
 	};
 
-	const editRect = (e) => {
+	const editShape = (e) => {
 		if (isMouseDown) {
 			const id = cvsElements.findIndex((el) => el.id === selected);
 
@@ -59,13 +64,14 @@ function App() {
 					zIndex: 1,
 				}}
 			>
-				<Toolbar />
+				<Toolbar setTool={setTool} active={tool} />
 			</div>
 			<Canvas
 				elements={cvsElements}
-				createObject={createRect}
-				editObject={editRect}
+				createObject={createShape}
+				editObject={editShape}
 				onMouseUp={mouseUp}
+				selected={selected}
 			/>
 		</div>
 	);

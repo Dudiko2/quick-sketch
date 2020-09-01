@@ -1,11 +1,22 @@
 class CanvasElement {
-	constructor({ id = Math.random() * 10000, type, x, y, w = 0, h = 0 }) {
+	constructor({
+		id = Math.random() * 10000,
+		type,
+		x,
+		y,
+		w = 0,
+		h = 0,
+		strokeW,
+		strokeC,
+	}) {
 		this.type = type;
 		this.x = x;
 		this.y = y;
 		this.id = id; // find a better way to set ids
 		this.w = w;
 		this.h = h;
+		this.strokeW = strokeW;
+		this.strokeC = strokeC;
 	}
 
 	get centerX() {
