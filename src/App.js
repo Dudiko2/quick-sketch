@@ -4,7 +4,13 @@ import { CanvasElement } from "./actions/elements";
 
 import Canvas from "./components/Canvas/Canvas";
 import Toolbar from "./components/Toolbar/Toolbar";
-import { DEFAULT_TOOL } from "./actions/tools";
+import {
+	DEFAULT_TOOL,
+	Actions,
+	RECTANGLE,
+	ELLIPSE,
+	SELECTION,
+} from "./actions/tools";
 
 function App() {
 	const [cvsElements, setCvsElements] = useState([]);
@@ -46,7 +52,7 @@ function App() {
 		}
 	};
 
-	const mouseUp = () => {
+	const releaseShape = () => {
 		const els = cvsElements.filter((elm) => elm.w !== 0 && elm.h !== 0);
 
 		if (els.length !== cvsElements.length) setSelected(null);
@@ -54,14 +60,44 @@ function App() {
 		setIsMouseDown(false);
 	};
 
+	const selectShape = (e) => {
+		const shape = [...cvsElements].reverse().find((el) => {
+			return (
+				el.x <= e.clientX &&
+				el.x + el.w >= e.clientX &&
+				el.y <= e.clientY &&
+				el.y + el.h >= e.clientY
+			);
+		});
+
+		if (shape) setSelected(shape.id);
+		else setSelected(null);
+	};
+
+	const actions = new Actions({
+		[RECTANGLE]: {
+			mouseDown: createShape,
+			mouseMove: editShape,
+			mouseUp: releaseShape,
+		},
+		[ELLIPSE]: {
+			mouseDown: createShape,
+			mouseMove: editShape,
+			mouseUp: releaseShape,
+		},
+		[SELECTION]: {
+			mouseDown: selectShape,
+		},
+	});
+
 	return (
 		<div className="App">
 			<Toolbar setTool={setTool} active={tool} />
 			<Canvas
 				elements={cvsElements}
-				createObject={createShape}
-				editObject={editShape}
-				onMouseUp={mouseUp}
+				onMouseDown={(e) => actions.mouseDown(e, tool)}
+				onMouseMove={(e) => actions.mouseMove(e, tool)}
+				onMouseUp={(e) => actions.mouseUp(e, tool)}
 				selected={selected}
 			/>
 		</div>

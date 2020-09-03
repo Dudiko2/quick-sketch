@@ -4,8 +4,8 @@ import { drawElements, drawSelection } from "../../actions/drawing";
 
 const Canvas = ({
 	elements,
-	createObject,
-	editObject,
+	onMouseDown,
+	onMouseMove,
 	onMouseUp,
 	selected,
 }) => {
@@ -49,8 +49,8 @@ const Canvas = ({
 			height={cvsSize.height}
 			ref={cRef}
 			className={Styles.Canvas}
-			onMouseDown={createObject}
-			onMouseMove={editObject}
+			onMouseDown={onMouseDown}
+			onMouseMove={onMouseMove}
 			onMouseUp={onMouseUp}
 		>
 			Drawing canvas
