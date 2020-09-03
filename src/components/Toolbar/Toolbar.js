@@ -1,7 +1,7 @@
 import React from "react";
 import Styles from "./Toolbar.module.css";
 
-import { RECTANGLE, ELLIPSE, SELECTION } from "../../state/globals";
+import { RECTANGLE, ELLIPSE, SELECTION } from "../../actions/tools";
 
 const Toolbar = ({ setTool, active }) => {
 	return (
