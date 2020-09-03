@@ -4,7 +4,7 @@ import { CanvasElement } from "./actions/elements";
 
 import Canvas from "./components/Canvas/Canvas";
 import Toolbar from "./components/Toolbar/Toolbar";
-import { DEFAULT_TOOL, RECTANGLE, ELLIPSE } from "./state/globals";
+import { DEFAULT_TOOL } from "./state/globals";
 
 function App() {
 	const [cvsElements, setCvsElements] = useState([]);
