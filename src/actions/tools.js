@@ -1,6 +1,7 @@
 const SELECTION = "selection";
 const RECTANGLE = "rectangle";
 const ELLIPSE = "ellipse";
+const RESIZER = "resizer";
 const DEFAULT_TOOL = RECTANGLE;
 
 // const exmp = {
@@ -33,4 +34,4 @@ class Actions {
 	}
 }
 
-export { DEFAULT_TOOL, SELECTION, RECTANGLE, ELLIPSE, Actions };
+export { DEFAULT_TOOL, SELECTION, RECTANGLE, ELLIPSE, RESIZER, Actions };

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import { CanvasElement } from "./actions/elements";
-
+import { CanvasElement, mouseOnCircle } from "./actions/elements";
 import Canvas from "./components/Canvas/Canvas";
 import Toolbar from "./components/Toolbar/Toolbar";
 import {
@@ -10,6 +9,7 @@ import {
 	RECTANGLE,
 	ELLIPSE,
 	SELECTION,
+	RESIZER,
 } from "./actions/tools";
 
 function App() {
@@ -58,6 +58,7 @@ function App() {
 		if (els.length !== cvsElements.length) setSelected(null);
 		setCvsElements(els);
 		setIsMouseDown(false);
+		setMouseAnchor(null);
 	};
 
 	const selectShape = (e) => {
@@ -70,8 +71,61 @@ function App() {
 			);
 		});
 
-		if (shape) setSelected(shape.id);
-		else setSelected(null);
+		if (shape) {
+			setSelected(shape.id);
+			setMouseAnchor({ x: e.clientX, y: e.clientY });
+			setIsMouseDown(true);
+		} else setSelected(null);
+	};
+
+	const moveShape = (e) => {
+		const id = cvsElements.findIndex((elm) => elm.id === selected);
+
+		const x = cvsElements[id].x + e.clientX - mouseAnchor.x;
+		const y = cvsElements[id].y + e.clientY - mouseAnchor.y;
+
+		const newArr = [...cvsElements];
+		newArr[id] = new CanvasElement({ ...newArr[id], x, y });
+
+		setMouseAnchor({ x: e.clientX, y: e.clientY });
+		setCvsElements(newArr);
+	};
+
+	const selectionMouseMove = (e) => {
+		if (isMouseDown) {
+			moveShape(e);
+		} else if (selected) {
+			const elm = cvsElements.find((elm) => elm.id === selected);
+			const resizeAnchor = elm.resizers.find((r) =>
+				mouseOnCircle({ x: e.clientX, y: e.clientY }, r)
+			);
+
+			if (resizeAnchor) setTool(RESIZER);
+		}
+	};
+
+	const resizerMouseDown = (e) => {
+		const elm = cvsElements.find((elm) => elm.id === selected);
+		const id = elm.resizers.findIndex((r) =>
+			mouseOnCircle({ x: e.clientX, y: e.clientY }, r)
+		);
+		const anchorId = (id + 2) % 4;
+
+		setMouseAnchor(elm.resizers[anchorId]);
+		setIsMouseDown(true);
+	};
+
+	const resizerMouseMove = (e) => {
+		if (isMouseDown) {
+			editShape(e);
+		} else {
+			const elm = cvsElements.find((elm) => elm.id === selected);
+			const resizeAnchor = elm.resizers.find((r) =>
+				mouseOnCircle({ x: e.clientX, y: e.clientY }, r)
+			);
+
+			if (!resizeAnchor) setTool(SELECTION);
+		}
 	};
 
 	const actions = new Actions({
@@ -87,6 +141,13 @@ function App() {
 		},
 		[SELECTION]: {
 			mouseDown: selectShape,
+			mouseMove: selectionMouseMove,
+			mouseUp: releaseShape,
+		},
+		[RESIZER]: {
+			mouseDown: resizerMouseDown,
+			mouseMove: resizerMouseMove,
+			mouseUp: releaseShape,
 		},
 	});
 

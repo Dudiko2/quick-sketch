@@ -26,6 +26,23 @@ class CanvasElement {
 	get centerY() {
 		return this.y + this.h / 2;
 	}
+
+	get resizers() {
+		return [
+			{ x: this.x, y: this.y },
+			{ x: this.x + this.w, y: this.y },
+			{ x: this.x + this.w, y: this.y + this.h },
+			{ x: this.x, y: this.y + this.h },
+		];
+	}
 }
 
-export { CanvasElement };
+const mouseOnCircle = (mouseCords, circleCords, radius = 10) => {
+	const a = circleCords.x - mouseCords.x;
+	const b = circleCords.y - mouseCords.y;
+	const c = a * a + b * b;
+
+	return c <= radius;
+};
+
+export { CanvasElement, mouseOnCircle };

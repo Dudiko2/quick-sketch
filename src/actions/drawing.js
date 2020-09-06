@@ -32,7 +32,7 @@ const drawEllipse = (ctx, elm) => {
 
 const drawSelection = (ctx, els, selected) => {
 	const elm = els.find((elm) => elm.id === selected);
-	const { x, y, w, h } = elm;
+	const { x, y, w, h, resizers } = elm;
 
 	ctx.beginPath();
 	ctx.rect(x, y, w, h);
@@ -46,6 +46,14 @@ const drawSelection = (ctx, els, selected) => {
 	ctx.moveTo(elm.centerX, elm.centerY - 7);
 	ctx.lineTo(elm.centerX, elm.centerY + 7);
 	drawStroke(ctx, 1, "#47CFFA");
+
+	resizers.forEach((r) => {
+		ctx.beginPath();
+		ctx.arc(r.x, r.y, 5, 0, Math.PI * 2);
+		drawStroke(ctx, 3, "#47CFFA");
+		ctx.fillStyle = "white";
+		ctx.fill();
+	});
 };
 
 const drawStroke = (ctx, width, color) => {
