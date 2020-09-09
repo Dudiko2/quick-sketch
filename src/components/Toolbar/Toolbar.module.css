@@ -29,18 +29,9 @@
 	user-select: none;
 }
 
-.Toolbar div:hover {
-	cursor: pointer;
-	background-color: #eeeeee;
-}
-
 .Toolbar .active {
 	background-color: black;
 	color: white;
-}
-
-.Toolbar .active:hover {
-	background-color: black;
 }
 
 @media only screen and (min-width: 1024px) {
@@ -60,5 +51,14 @@
 
 	.Toolbar div {
 		margin: 0.2em;
+	}
+
+	.Toolbar div:hover {
+		cursor: pointer;
+		background-color: #eeeeee;
+	}
+
+	.Toolbar .active:hover {
+		background-color: black;
 	}
 }

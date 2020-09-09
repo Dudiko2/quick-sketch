@@ -37,12 +37,12 @@ class CanvasElement {
 	}
 }
 
-const mouseOnCircle = (mouseCords, circleCords, radius = 10) => {
+const mouseOnCircle = (mouseCords, circleCords, radius = 5) => {
 	const a = circleCords.x - mouseCords.x;
 	const b = circleCords.y - mouseCords.y;
-	const c = a * a + b * b;
+	const cSquared = a * a + b * b;
 
-	return c <= radius;
+	return cSquared <= radius * radius;
 };
 
 export { CanvasElement, mouseOnCircle };

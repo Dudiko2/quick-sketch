@@ -7,6 +7,9 @@ const Canvas = ({
 	onMouseDown,
 	onMouseMove,
 	onMouseUp,
+	onTouchStart,
+	onTouchMove,
+	onTouchEnd,
 	selected,
 }) => {
 	const cRef = useRef();
@@ -52,6 +55,9 @@ const Canvas = ({
 			onMouseDown={onMouseDown}
 			onMouseMove={onMouseMove}
 			onMouseUp={onMouseUp}
+			onTouchStart={onTouchStart}
+			onTouchMove={onTouchMove}
+			onTouchEnd={onTouchEnd}
 		>
 			Drawing canvas
 		</canvas>

@@ -21,11 +21,11 @@ function App() {
 	const [strokeWidth, setStrokeWidth] = useState(3);
 	const [strokeColor, setStrokeColor] = useState("#000");
 
-	const createShape = (e) => {
+	const createShape = ({ clX, clY }) => {
 		const newElement = new CanvasElement({
 			type: tool,
-			x: e.clientX,
-			y: e.clientY,
+			x: clX,
+			y: clY,
 			strokeW: strokeWidth,
 			strokeC: strokeColor,
 		});
@@ -36,14 +36,14 @@ function App() {
 		setIsMouseDown(true);
 	};
 
-	const editShape = (e) => {
+	const editShape = ({ clX, clY }) => {
 		if (isMouseDown) {
 			const id = cvsElements.findIndex((el) => el.id === selected);
 
-			const x = Math.min(mouseAnchor.x, e.clientX);
-			const y = Math.min(mouseAnchor.y, e.clientY);
-			const w = Math.abs(mouseAnchor.x - e.clientX);
-			const h = Math.abs(mouseAnchor.y - e.clientY);
+			const x = Math.min(mouseAnchor.x, clX);
+			const y = Math.min(mouseAnchor.y, clY);
+			const w = Math.abs(mouseAnchor.x - clX);
+			const h = Math.abs(mouseAnchor.y - clY);
 
 			const newArr = [...cvsElements];
 			newArr[id] = new CanvasElement({ ...newArr[id], x, y, w, h });
@@ -56,75 +56,66 @@ function App() {
 		const els = cvsElements.filter((elm) => elm.w !== 0 && elm.h !== 0);
 
 		if (els.length !== cvsElements.length) setSelected(null);
+		setTool(SELECTION);
 		setCvsElements(els);
 		setIsMouseDown(false);
 		setMouseAnchor(null);
 	};
 
-	const selectShape = (e) => {
+	const selectionStart = ({ clX, clY }) => {
+		if (selected) {
+			const selectedElm = cvsElements.find((s) => s.id === selected);
+			const id = selectedElm.resizers.findIndex((r) =>
+				mouseOnCircle({ x: clX, y: clY }, r)
+			);
+
+			if (id !== -1) {
+				const oppositeId = (id + 2) % 4;
+				setTool(RESIZER);
+				setIsMouseDown(true);
+				setMouseAnchor(selectedElm.resizers[oppositeId]);
+			} else {
+				selectShape({ clX, clY });
+			}
+		} else selectShape({ clX, clY });
+	};
+
+	const selectShape = ({ clX, clY }) => {
 		const shape = [...cvsElements].reverse().find((el) => {
 			return (
-				el.x <= e.clientX &&
-				el.x + el.w >= e.clientX &&
-				el.y <= e.clientY &&
-				el.y + el.h >= e.clientY
+				el.x <= clX && el.x + el.w >= clX && el.y <= clY && el.y + el.h >= clY
 			);
 		});
 
 		if (shape) {
 			setSelected(shape.id);
-			setMouseAnchor({ x: e.clientX, y: e.clientY });
+			setMouseAnchor({ x: clX, y: clY });
 			setIsMouseDown(true);
 		} else setSelected(null);
 	};
 
-	const moveShape = (e) => {
+	const moveShape = ({ clX, clY }) => {
 		const id = cvsElements.findIndex((elm) => elm.id === selected);
 
-		const x = cvsElements[id].x + e.clientX - mouseAnchor.x;
-		const y = cvsElements[id].y + e.clientY - mouseAnchor.y;
+		const x = cvsElements[id].x + clX - mouseAnchor.x;
+		const y = cvsElements[id].y + clY - mouseAnchor.y;
 
 		const newArr = [...cvsElements];
 		newArr[id] = new CanvasElement({ ...newArr[id], x, y });
 
-		setMouseAnchor({ x: e.clientX, y: e.clientY });
+		setMouseAnchor({ x: clX, y: clY });
 		setCvsElements(newArr);
 	};
 
-	const selectionMouseMove = (e) => {
+	const selectionMove = ({ clX, clY }) => {
 		if (isMouseDown) {
-			moveShape(e);
-		} else if (selected) {
-			const elm = cvsElements.find((elm) => elm.id === selected);
-			const resizeAnchor = elm.resizers.find((r) =>
-				mouseOnCircle({ x: e.clientX, y: e.clientY }, r)
-			);
-
-			if (resizeAnchor) setTool(RESIZER);
+			moveShape({ clX, clY });
 		}
 	};
 
-	const resizerMouseDown = (e) => {
-		const elm = cvsElements.find((elm) => elm.id === selected);
-		const id = elm.resizers.findIndex((r) =>
-			mouseOnCircle({ x: e.clientX, y: e.clientY }, r)
-		);
-		const anchorId = (id + 2) % 4;
-
-		setMouseAnchor(elm.resizers[anchorId]);
-		setIsMouseDown(true);
-	};
-
-	const resizerMouseMove = (e) => {
+	const resizerMove = ({ clX, clY }) => {
 		if (isMouseDown) {
-			editShape(e);
-		} else {
-			const elm = cvsElements.find((elm) => elm.id === selected);
-			const resizeAnchor = elm.resizers.find((r) =>
-				mouseOnCircle({ x: e.clientX, y: e.clientY }, r)
-			);
-
-			if (!resizeAnchor) setTool(SELECTION);
+			editShape({ clX, clY });
 		}
 	};
 
@@ -133,21 +124,31 @@ function App() {
 			mouseDown: createShape,
 			mouseMove: editShape,
 			mouseUp: releaseShape,
+			touchStart: createShape,
+			touchMove: editShape,
+			touchEnd: releaseShape,
 		},
 		[ELLIPSE]: {
 			mouseDown: createShape,
 			mouseMove: editShape,
 			mouseUp: releaseShape,
+			touchStart: createShape,
+			touchMove: editShape,
+			touchEnd: releaseShape,
 		},
 		[SELECTION]: {
-			mouseDown: selectShape,
-			mouseMove: selectionMouseMove,
+			mouseDown: selectionStart,
+			mouseMove: selectionMove,
 			mouseUp: releaseShape,
+			touchStart: selectionStart,
+			touchMove: selectionMove,
+			touchEnd: releaseShape,
 		},
 		[RESIZER]: {
-			mouseDown: resizerMouseDown,
-			mouseMove: resizerMouseMove,
+			mouseMove: resizerMove,
 			mouseUp: releaseShape,
+			touchMove: resizerMove,
+			touchEnd: releaseShape,
 		},
 	});
 
@@ -159,6 +160,9 @@ function App() {
 				onMouseDown={(e) => actions.mouseDown(e, tool)}
 				onMouseMove={(e) => actions.mouseMove(e, tool)}
 				onMouseUp={(e) => actions.mouseUp(e, tool)}
+				onTouchStart={(e) => actions.touchStart(e, tool)}
+				onTouchMove={(e) => actions.touchMove(e, tool)}
+				onTouchEnd={(e) => actions.touchEnd(e, tool)}
 				selected={selected}
 			/>
 		</div>
